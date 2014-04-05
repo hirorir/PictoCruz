@@ -1,11 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using Parse;
 
 public class Locationpls : MonoBehaviour {
 	LocationInfo li;
+	public bool anonymous = false;
+	ParseUser user;
 
 	// Use this for initialization
 	void Start () {
+		if (anonymous) {
+
+		}
+		else{
+
+		}
 		StartCoroutine(updateLocation());
 	}
 
@@ -41,7 +51,7 @@ public class Locationpls : MonoBehaviour {
 		yield return new WaitForSeconds(0);
 	}
 
-	float getDistanceFromLatLonInKm(float lat1,float lon1,float lat2,float lon2) {
+	/*float getDistanceFromLatLonInKm(float lat1,float lon1,float lat2,float lon2) {
 		float R = 6371; // Radius of the earth in km
 		float dLat = deg2rad(lat2-lat1);  // deg2rad below
 		float dLon = deg2rad(lon2-lon1); 
@@ -57,6 +67,6 @@ public class Locationpls : MonoBehaviour {
 	
 	float deg2rad(float deg) {
 		return ((float) deg * (Mathf.PI / 180));
-	}
+	}*/
 	
 }
