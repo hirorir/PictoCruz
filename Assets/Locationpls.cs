@@ -5,6 +5,7 @@ using Parse;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System;
 
 public class Locationpls : MonoBehaviour {
 	LocationInfo li;
@@ -78,17 +79,14 @@ public class Locationpls : MonoBehaviour {
 			loggedin = true;
 		}
 	}
-	
+
 	void signUp(){
 		user = new ParseUser(){
 			Username = username,
 			Password = password,
 			Email = email
 		};
-		
-		
-		user["Geolocation"] = new ParseGeoPoint( lat, lon );
-		
+
 		int results = 0;
 		ParseQuery<ParseUser> query = new ParseQuery<ParseUser>();
 		query.WhereEqualTo ("username", username).CountAsync ().ContinueWith (t => {
@@ -103,6 +101,9 @@ public class Locationpls : MonoBehaviour {
 					print("Invalid email address");
 					return;
 				}
+
+				user["Geolocation"] = new ParseGeoPoint( lat, lon );
+				user["Messages"] = new List<string> ();
 				
 				Task signuptask = user.SignUpAsync ();
 				print ("Success");
@@ -136,8 +137,7 @@ public class Locationpls : MonoBehaviour {
 			});
 			StartCoroutine(wait (2, dothis));
 		};
-		
-		
+
 	}
 
 	IEnumerator updateLocation(){

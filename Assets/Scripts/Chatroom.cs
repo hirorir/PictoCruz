@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using NTextSize; // Might use this later for more accurate wrapping
+using System;
+using Parse;
+using System.Threading.Tasks;
 
 public class Chatroom : MonoBehaviour {
 	private string fieldMsg = "";
@@ -39,7 +43,19 @@ public class Chatroom : MonoBehaviour {
 		}
 	}
 
+	public void sendMessageToServer(string message){
+		message += (" " + DateTime.Now.ToString ());
+		ParseUser.CurrentUser.AddToList ("Messages", message);
+		Task saveTask = ParseUser.CurrentUser.SaveAsync ();
+		foreach(string s in ParseUser.CurrentUser.Get<IList<string> >("Messages")){
+			print (s);
+		}
+	}
+
 	public void postMessage(string message) {
+
+		sendMessageToServer (message);
+
 		msgCount++;
 		GameObject newMsg = GameObject.Instantiate(Resources.Load("ChatBubble"), new Vector2(0, -5.5f), new Quaternion(0, 0, 0, 0)) as GameObject;
 		message = splitTextMesh(message, 17);
