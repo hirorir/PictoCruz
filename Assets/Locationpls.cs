@@ -10,6 +10,8 @@ public class Locationpls : MonoBehaviour {
 	string username;
 	string password;
 	string email;
+	double lat;
+	double lon;
 	bool usernamecleared = true;
 	bool passwordcleared = true;
 	bool emailcleared = true;
@@ -45,7 +47,9 @@ public class Locationpls : MonoBehaviour {
 				Username = username,
 				Password = password,
 				Email = email
+
 			};
+			user["Geolocation"] = new ParseGeoPoint( lat, lon );
 			try{
 				Task signuptask = user.SignUpAsync ();
 				print ("Success");
@@ -87,6 +91,9 @@ public class Locationpls : MonoBehaviour {
 		Input.location.Stop();
 
 		gameObject.GetComponent<GUIText>().text = "LAT: " + li.latitude + " LON: " + li.longitude + " ALT: " + li.altitude;
+
+		lat = li.latitude;
+		lon = li.longitude;
 
 		yield return new WaitForSeconds(0);
 	}
