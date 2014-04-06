@@ -43,8 +43,9 @@ public class Entity : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			if (!isDisplayed) {
 				//gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/kappa")[0];
-				foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble"))
-					Destroy(bubble);
+				foreach (Transform bubble in gameObject.transform)
+					if(bubble.gameObject.tag == "ChatBubbles")
+						Destroy(bubble.gameObject);
 				GameObject scrollBox = GameObject.Instantiate(Resources.Load("ScrollBox")) as GameObject;
 				scrollBox.transform.parent = gameObject.transform;
 				scrollBox.transform.localPosition = new Vector2(4f, 3f);
@@ -52,7 +53,7 @@ public class Entity : MonoBehaviour {
 				displayEntityMsgs();
 			} else {
 				gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/person_icon")[0];
-				Destroy(transform.FindChild("ScrollBox"));
+				Destroy(transform.GetChild (0).gameObject);
 				isDisplayed = false;
 				/*foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
 					Destroy(bubble);
