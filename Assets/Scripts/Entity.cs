@@ -35,14 +35,18 @@ public class Entity : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			if (!isDisplayed) {
 				//gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/kappa")[0];
+				GameObject scrollBox = GameObject.Instantiate(Resources.Load("ScrollBox")) as GameObject;
+				scrollBox.transform.parent = gameObject.transform;
+				scrollBox.transform.localPosition = new Vector2(4f, 3f);
 				isDisplayed = true;
 				displayEntityMsgs();
 			} else {
 				gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/person_icon")[0];
 				isDisplayed = false;
-				foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
+				Destroy(GameObject.Find("ScrollBox"));
+				/*foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
 					Destroy(bubble);
-				}
+				}*/
 			}
 		}
 	}
@@ -76,8 +80,8 @@ public class Entity : MonoBehaviour {
 
 	public void postMessage(string message) {
 		GameObject newMsg = GameObject.Instantiate(Resources.Load("ChatBubble")) as GameObject;
-		newMsg.transform.parent = gameObject.transform;
-		newMsg.transform.localPosition = new Vector2(4f, -2f);
+		newMsg.transform.parent = GameObject.FindGameObjectWithTag("ScrollBox").transform;
+		newMsg.transform.localPosition = new Vector2(0, -2f);
 		message = splitTextMesh(message, 17);
 		newMsg.transform.FindChild("Message").GetComponent<TextMesh>().text = message;
 		Vector2 transVec = new Vector2(0, newMsg.GetComponent<SpriteRenderer>().sprite.bounds.size.y);
