@@ -24,6 +24,8 @@ public class Locationpls : MonoBehaviour {
 	delegate void dummy();
 	dummy dothis;
 
+	private GUISkin style;
+
 	// Use this for initialization
 	void Start () {
 		username = "Username";
@@ -36,12 +38,13 @@ public class Locationpls : MonoBehaviour {
 		ylow = (float)(-122.070676 - 122.067273) / 2;
 		xlow = (float)(36.974237 + 36.978925) / 2;
 		yhigh = (float)(-122.049974 - 122.047807) / 2;
+		style = Resources.Load<GUISkin>("Defaultpls");
 	}
 
 	void OnGUI() {
 		if (loggedin)
 			return;
-		haveaccount = GUI.Toggle (new Rect(Screen.width * 0.8f, Screen.height * 0.5f, 200, 40), haveaccount, "Existing User?");
+		haveaccount = GUI.Toggle (new Rect(Screen.width * 0.8f, Screen.height * 0.5f, 200, 40), haveaccount, "Existing User?", style.toggle);
 			
 		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "usernameField") && usernamecleared){
 			username = "";
@@ -62,10 +65,10 @@ public class Locationpls : MonoBehaviour {
 		if (!haveaccount)
 			email = GUI.TextField(new Rect(Screen.width * 0.1f, Screen.height * 0.6f, Screen.width * 0.5f, Screen.height * 0.2f), email, 40);
 		if(haveaccount){
-			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "LOGIN") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
+			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "LOGIN", style.button) || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
 				login ();
 		}else
-			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "SIGNUP") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
+			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "SIGNUP", style.button) || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
 				signUp ();
 
 	}

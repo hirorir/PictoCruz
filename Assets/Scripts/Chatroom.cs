@@ -10,10 +10,11 @@ public class Chatroom : MonoBehaviour {
 	private string fieldMsg = "";
 	private int msgCount = 0;
 	private bool posting = false;
+	public GUIStyle stylin;
 
 	// Use this for initialization
 	void Start () {
-	
+		stylin = Resources.Load<GUISkin>("Defaultpls").button;
 	}
 	
 	// Update is called once per frame
@@ -44,7 +45,7 @@ public class Chatroom : MonoBehaviour {
 
 			GUI.SetNextControlName("MyTextField");
 			fieldMsg = GUI.TextArea(new Rect(0f, Screen.height * 0.8f, Screen.width * 0.8f, Screen.height * 0.2f), fieldMsg, 100);
-			if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Send") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
+			if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Send", stylin) || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
 				GUI.FocusControl("dummy");
 				if (fieldMsg != "\n") {
 					//postMessage(fieldMsg);
@@ -54,7 +55,7 @@ public class Chatroom : MonoBehaviour {
 				posting = false;
 			}
 		} else {
-			if (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Post!") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return)) {
+			if (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Post!", stylin) || (!Event.current.shift && Event.current.keyCode == KeyCode.Return)) {
 				posting = true;
 			}
 		}
