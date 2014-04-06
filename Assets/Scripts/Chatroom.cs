@@ -5,6 +5,7 @@ using NTextSize; // Might use this later for more accurate wrapping
 public class Chatroom : MonoBehaviour {
 	private string fieldMsg = "";
 	private int msgCount = 0;
+	private bool posting = false;
 
 	// Use this for initialization
 	void Start () {
@@ -22,20 +23,33 @@ public class Chatroom : MonoBehaviour {
 			if (cam.transform.position.y < 2.55f * (msgCount - 1)) {
 				cam.Translate(new Vector2(0, 0.1f));
 			}
+		} else if (Input.GetKey("left")) {
+			cam.Translate(new Vector2(-0.1f, 0));
+		} else if (Input.GetKey("right")) {
+			cam.Translate(new Vector2(0.1f, 0));
 		}
 	}
 
 	private void OnGUI() {
-		GUI.SetNextControlName("dummy");
-		GUI.Label(new Rect(100, 100, -1, -1), "");
+		if (posting) {
+			GUI.SetNextControlName("dummy");
+			GUI.Label(new Rect(100, 100, -1, -1), "");
 
-		GUI.SetNextControlName("MyTextField");
-		fieldMsg = GUI.TextArea(new Rect(Screen.width * 0.35f, Screen.height * 0.9f, 350, 40), fieldMsg, 100);
-		if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.35f + 355, Screen.height * 0.9f, 45, 40), "Send") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
-			GUI.FocusControl("dummy");
-			if (fieldMsg != "\n")
-				postMessage(fieldMsg);
-			fieldMsg = "";
+			GUI.SetNextControlName("MyTextField");
+			fieldMsg = GUI.TextArea(new Rect(Screen.width * 0.35f, Screen.height * 0.9f, 350, 40), fieldMsg, 100);
+			if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.35f + 355, Screen.height * 0.9f, 45, 40), "Send") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
+				GUI.FocusControl("dummy");
+				if (fieldMsg != "\n") {
+					//postMessage(fieldMsg);
+					GameObject.Find("Entity").GetComponent<Entity>().addMessage(fieldMsg);
+				}
+				fieldMsg = "";
+				posting = false;
+			}
+		} else {
+			if (GUI.Button(new Rect(Screen.width * 0.5f - 25, Screen.height - 40, 50, 30), "Post!")) {
+				posting = true;
+			}
 		}
 	}
 
