@@ -43,6 +43,8 @@ public class Entity : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			if (!isDisplayed) {
 				//gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/kappa")[0];
+				foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble"))
+					Destroy(bubble);
 				GameObject scrollBox = GameObject.Instantiate(Resources.Load("ScrollBox")) as GameObject;
 				scrollBox.transform.parent = gameObject.transform;
 				scrollBox.transform.localPosition = new Vector2(4f, 3f);
