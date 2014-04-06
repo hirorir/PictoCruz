@@ -55,6 +55,10 @@ public class Chatroom : MonoBehaviour {
 
 	}
 
+	public void msgDead() {
+		msgCount--;
+	}
+
 	private string splitTextMesh(string input, int lineLength) {
  
 	 // Split string by char " "    
