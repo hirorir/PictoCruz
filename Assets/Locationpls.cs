@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Parse;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 public class Locationpls : MonoBehaviour {
 	LocationInfo li;
 	ParseUser user;
-	string username;
-	string password;
-	string email;
+	private string username;
+	private string password;
+	private string email;
 	bool usernamecleared = true;
 	bool passwordcleared = true;
 	bool emailcleared = true;
@@ -46,16 +48,33 @@ public class Locationpls : MonoBehaviour {
 				Password = password,
 				Email = email
 			};
-			try{
-				Task signuptask = user.SignUpAsync ();
-				print ("Success");
-			}catch(System.Exception e){
-				//Ask user to re-enter new username/email because they're already in use
-				print ("This user already exists");
-				return;
-			}
 
-			loggedin = true;
+			int results = 0;
+			ParseQuery<ParseUser> query = new ParseQuery<ParseUser>();
+			query.WhereEqualTo ("username", username).CountAsync ().ContinueWith (t => {
+				results += t.Result;
+				query.WhereEqualTo ("email", email).CountAsync ().ContinueWith (s => {
+					results += s.Result;
+					if(results > 0){
+						print ("User or email already exists");
+						return;
+					}
+					if(!Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z")){
+						print("Invalid email address");
+						return;
+					}
+
+					Task signuptask = user.SignUpAsync ();
+					print ("Success");
+					//loggedin = true;
+					try{
+						ParseUser.LogInAsync(username, password);
+						print ("Logged In");
+					}catch(System.Exception e){
+						print ("Login failed");
+					}
+				});
+			});
 		}
 	}
 
