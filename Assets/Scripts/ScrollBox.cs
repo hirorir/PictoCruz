@@ -15,14 +15,9 @@ public class ScrollBox : MonoBehaviour {
 	void Update () {
 		mousePos = Input.mousePosition;
 		if (Input.GetMouseButton(0) && scrollActive) {
-			int dir = 0;
-			if (mousePos.y - prevPos.y > 0) {
-				dir = -1;
-			} else if (mousePos.y - prevPos.y < 0) {
-				dir = 1;
-			}
+			float direction = (mousePos.y - prevPos.y) / 100;
 			foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
-				bubble.transform.Translate(new Vector2(0f, dir * 0.035f));
+				bubble.transform.Translate(new Vector2(0, direction));
 			}
 		}
 		prevPos = mousePos;
