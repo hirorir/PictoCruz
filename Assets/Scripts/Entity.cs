@@ -52,8 +52,8 @@ public class Entity : MonoBehaviour {
 				displayEntityMsgs();
 			} else {
 				gameObject.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Images/person_icon")[0];
+				Destroy(transform.FindChild("ScrollBox"));
 				isDisplayed = false;
-				Destroy(GameObject.Find("ScrollBox"));
 				/*foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
 					Destroy(bubble);
 				}*/

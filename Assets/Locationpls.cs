@@ -124,13 +124,11 @@ public class Locationpls : MonoBehaviour {
 				}
 			});
 		});
-		if (loggedin) {
 			GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
 			temp.GetComponent<Entity> ().setUID (ParseUser.CurrentUser.ObjectId);
 			GameObject chat = GameObject.Instantiate(Resources.Load("Chatroom"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
 			chat.GetComponent<Chatroom>().entity = temp.GetComponent<Entity>();
 			chat.GetComponent<Chatroom>().userId = ParseUser.CurrentUser.ObjectId;
-		}
 	}
 	
 	void Update () {
@@ -180,13 +178,13 @@ public class Locationpls : MonoBehaviour {
 			li = Input.location.lastData;
 		Input.location.Stop();
 
-		lat = 36.989291;
-		lon = -122.063417;
-		//lat = li.latitude;
-		//lon = li.longitude;
+		//lat = 36.999291;
+		//lon = -122.063417;
+		lat = li.latitude;
+		lon = li.longitude;
 
 		ParseUser.CurrentUser["Geolocation"] = new ParseGeoPoint( lat, lon );
-
+		ParseUser.CurrentUser.SaveAsync();
 		yield return new WaitForSeconds(30);
 
 		StartCoroutine (updateLocation ());
