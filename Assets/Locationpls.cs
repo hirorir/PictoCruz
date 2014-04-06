@@ -9,9 +9,14 @@ using System.Text.RegularExpressions;
 public class Locationpls : MonoBehaviour {
 	LocationInfo li;
 	ParseUser user;
+
 	private string username;
 	private string password;
 	private string email;
+
+	double lat;
+	double lon;
+
 	bool usernamecleared = true;
 	bool passwordcleared = true;
 	bool emailcleared = true;
@@ -47,7 +52,12 @@ public class Locationpls : MonoBehaviour {
 				Username = username,
 				Password = password,
 				Email = email
+
 			};
+
+
+			user["Geolocation"] = new ParseGeoPoint( lat, lon );
+			
 
 			int results = 0;
 			ParseQuery<ParseUser> query = new ParseQuery<ParseUser>();
@@ -106,6 +116,9 @@ public class Locationpls : MonoBehaviour {
 		Input.location.Stop();
 
 		gameObject.GetComponent<GUIText>().text = "LAT: " + li.latitude + " LON: " + li.longitude + " ALT: " + li.altitude;
+
+		lat = li.latitude;
+		lon = li.longitude;
 
 		yield return new WaitForSeconds(0);
 	}
