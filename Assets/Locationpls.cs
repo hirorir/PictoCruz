@@ -2,21 +2,61 @@
 using System.Collections;
 using System.Collections.Generic;
 using Parse;
+using System.Threading.Tasks;
 
 public class Locationpls : MonoBehaviour {
 	LocationInfo li;
-	public bool anonymous = false;
 	ParseUser user;
+	string username;
+	string password;
+	string email;
+	bool usernamecleared = true;
+	bool passwordcleared = true;
+	bool emailcleared = true;
+	bool loggedin = false;
 
 	// Use this for initialization
 	void Start () {
-		if (anonymous) {
-
-		}
-		else{
-
-		}
+		username = "Username";
+		password = "Password";
+		email = "Email";
 		StartCoroutine(updateLocation());
+	}
+
+	void OnGUI() {
+		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "usernameField") && usernamecleared){
+			username = "";
+			usernamecleared = false;
+		}*/
+		username = GUI.TextField(new Rect(10, 10, 200, 20), username, 40);
+		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "passwordField") && passwordcleared){
+			password = "";
+			passwordcleared = false;
+		}*/
+		password = GUI.PasswordField(new Rect(10, 40, 200, 20), password, '*');
+		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "emailField") && emailcleared){
+			email = "";
+			emailcleared = false;
+		}*/
+		email = GUI.TextField(new Rect(10, 70, 200, 20), email, 40);
+
+		if (GUI.Button (new Rect (10, 100, 200, 20), "SIGNUP") && !loggedin){
+			user = new ParseUser(){
+				Username = username,
+				Password = password,
+				Email = email
+			};
+			try{
+				Task signuptask = user.SignUpAsync ();
+				print ("Success");
+			}catch(System.Exception e){
+				//Ask user to re-enter new username/email because they're already in use
+				print ("This user already exists");
+				return;
+			}
+
+			loggedin = true;
+		}
 	}
 
 	void Update () {
@@ -50,23 +90,5 @@ public class Locationpls : MonoBehaviour {
 
 		yield return new WaitForSeconds(0);
 	}
-
-	/*float getDistanceFromLatLonInKm(float lat1,float lon1,float lat2,float lon2) {
-		float R = 6371; // Radius of the earth in km
-		float dLat = deg2rad(lat2-lat1);  // deg2rad below
-		float dLon = deg2rad(lon2-lon1); 
-		float a = 
-			Mathf.Sin(dLat/2) * Mathf.Sin(dLat/2) +
-				Mathf.Cos(deg2rad(lat1)) * Mathf.Cos(deg2rad(lat2)) * 
-				Mathf.Sin(dLon/2) * Mathf.Sin(dLon/2)
-				; 
-		float c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1-a)); 
-		float d = R * c; // Distance in km
-		return d;
-	}
-	
-	float deg2rad(float deg) {
-		return ((float) deg * (Mathf.PI / 180));
-	}*/
 	
 }
