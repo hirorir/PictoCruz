@@ -92,7 +92,8 @@ public class Entity : MonoBehaviour {
 
 	public void postMessage(string message) {
 		GameObject newMsg = GameObject.Instantiate(Resources.Load("ChatBubble")) as GameObject;
-		newMsg.transform.parent = GameObject.FindGameObjectWithTag("ScrollBox").transform;
+		if (isDisplayed)
+			newMsg.transform.parent = transform.GetChild (0);
 		newMsg.transform.localPosition = new Vector2(0, -2f);
 		message = splitTextMesh(message, 17);
 		newMsg.transform.FindChild("Message").GetComponent<TextMesh>().text = message;

@@ -178,10 +178,10 @@ public class Locationpls : MonoBehaviour {
 			li = Input.location.lastData;
 		Input.location.Stop();
 
-		//lat = 36.999291;
-		//lon = -122.063417;
-		lat = li.latitude;
-		lon = li.longitude;
+		lat = 36.999291;
+		lon = -122.063417;
+		//lat = li.latitude;
+		//lon = li.longitude;
 
 		ParseUser.CurrentUser["Geolocation"] = new ParseGeoPoint( lat, lon );
 		ParseUser.CurrentUser.SaveAsync();
