@@ -10,10 +10,12 @@ public class Chatroom : MonoBehaviour {
 	private string fieldMsg = "";
 	private int msgCount = 0;
 	private bool posting = false;
+	public Entity entity;
+	public string userId;
 
 	// Use this for initialization
 	void Start () {
-	
+		drawEverybodyElse ();
 	}
 	
 	// Update is called once per frame
@@ -48,7 +50,7 @@ public class Chatroom : MonoBehaviour {
 				GUI.FocusControl("dummy");
 				if (fieldMsg != "\n") {
 					//postMessage(fieldMsg);
-					GameObject.Find("Entity").GetComponent<Entity>().addMessage(fieldMsg);
+					entity.addMessage(fieldMsg);
 				}
 				fieldMsg = "";
 				posting = false;
@@ -60,12 +62,23 @@ public class Chatroom : MonoBehaviour {
 		}
 	}
 
+	public void drawEverybodyElse(){
+		var query = ParseUser.Query.WhereNotEqualTo ("objectId", userId);
+		List<ParseUser> parser = new List<ParseUser> ();
+		query.FindAsync ().ContinueWith (t => {
+			IEnumerable<ParseUser> list = t.Result;
+		});
+		print(parser.Count);
+		//GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+			//temp.GetComponent<Entity> ().setUID (puck.ObjectId);
+	}
+
 	public void sendMessageToServer(string message){
 		message += (" " + DateTime.Now.ToString ());
 		ParseUser.CurrentUser.AddToList ("Messages", message);
 		Task saveTask = ParseUser.CurrentUser.SaveAsync ();
 		foreach(string s in ParseUser.CurrentUser.Get<IList<string> >("Messages")){
-			print (s);
+			//print (s);
 		}
 	}
 

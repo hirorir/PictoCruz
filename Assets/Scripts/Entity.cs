@@ -7,10 +7,11 @@ using Parse;
 using System.Threading.Tasks;
 
 public class Entity : MonoBehaviour {
-	[SerializeField] private int userId;
+	[SerializeField] private string userId;
 	private List<string> messages;
 	private bool isDisplayed = false;
 	float xhigh, yhigh, xlow, ylow;
+	[SerializeField] float lon, lat;
 
 	// Use this for initialization
 	void Start() {
@@ -23,8 +24,15 @@ public class Entity : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+		var query = ParseUser.Query.GetAsync(userId).ContinueWith ( t=> {
+			ParseUser p = t.Result;
+			ParseGeoPoint li = p.Get<ParseGeoPoint>("Geolocation");
+			lon = (float) li.Longitude;
+			lat = (float) li.Latitude;
+		});
+
 		Vector3 scaling = Camera.main.ScreenToWorldPoint (new Vector3 (Camera.main.pixelWidth, Camera.main.pixelHeight, 0)) - Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
-		gameObject.transform.position = new Vector3 ((float)(xhigh - Locationpls.lat) * (scaling.x) / (xhigh - xlow) - scaling.x / 2, (float)(yhigh - Locationpls.lon) * (scaling.y) / (yhigh - ylow) - scaling.y / 2, 0);
+		gameObject.transform.position = new Vector3 ((float)(xhigh - lat) * (scaling.x) / (xhigh - xlow) - scaling.x / 2, (float)(yhigh - lon) * (scaling.y) / (yhigh - ylow) - scaling.y / 2, 0);
 	}
 
 	void OnGUI() {
@@ -48,11 +56,16 @@ public class Entity : MonoBehaviour {
 	}
 
 	public void addMessage(string message) {
-		sendMessageToServer (message);
+		if(ParseUser.CurrentUser.ObjectId == userId)
+			sendMessageToServer (message);
 		messages.Add(message);
 		if (isDisplayed) {
 			postMessage(message);
 		}
+	}
+
+	public void setUID(string id){
+		userId = id;
 	}
 
 	public void displayEntityMsgs() {
@@ -61,16 +74,12 @@ public class Entity : MonoBehaviour {
 		}
 	}
 
-	public bool idMatch(int otherId) {
-		return (userId == otherId);
-	}
-
 	public void sendMessageToServer(string message){
 		message += (" " + DateTime.Now.ToString ());
 		ParseUser.CurrentUser.AddToList ("Messages", message);
 		Task saveTask = ParseUser.CurrentUser.SaveAsync ();
 		foreach(string s in ParseUser.CurrentUser.Get<IList<string> >("Messages")){
-			print (s);
+			//print (s);
 		}
 	}
 

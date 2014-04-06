@@ -67,7 +67,6 @@ public class Locationpls : MonoBehaviour {
 		}else
 			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "SIGNUP") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
 				signUp ();
-
 	}
 
 	void login(){
@@ -81,8 +80,13 @@ public class Locationpls : MonoBehaviour {
 			print ("Logged In");
 			loggedin = true;
 		}
+		GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+		temp.GetComponent<Entity> ().setUID (ParseUser.CurrentUser.ObjectId);
+		GameObject chat = GameObject.Instantiate(Resources.Load("Chatroom"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+		chat.GetComponent<Chatroom>().entity = temp.GetComponent<Entity>();
+		chat.GetComponent<Chatroom>().userId = ParseUser.CurrentUser.ObjectId;
 	}
-
+	
 	void signUp(){
 		user = new ParseUser(){
 			Username = username,
@@ -117,8 +121,15 @@ public class Locationpls : MonoBehaviour {
 				}
 			});
 		});
+		if (loggedin) {
+			GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+			temp.GetComponent<Entity> ().setUID (ParseUser.CurrentUser.ObjectId);
+			GameObject chat = GameObject.Instantiate(Resources.Load("Chatroom"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+			chat.GetComponent<Chatroom>().entity = temp.GetComponent<Entity>();
+			chat.GetComponent<Chatroom>().userId = ParseUser.CurrentUser.ObjectId;
+		}
 	}
-
+	
 	void Update () {
 
 	}
@@ -168,6 +179,8 @@ public class Locationpls : MonoBehaviour {
 
 		lat = 36.989291;
 		lon = -122.063417;
+		//lat = li.latitude;
+		//lon = li.longitude;
 
 		ParseUser.CurrentUser["Geolocation"] = new ParseGeoPoint( lat, lon );
 
