@@ -35,13 +35,16 @@ public class Chatroom : MonoBehaviour {
 	}
 
 	private void OnGUI() {
+		if (!Locationpls.loggedin) {
+			return;
+		}
 		if (posting) {
 			GUI.SetNextControlName("dummy");
 			GUI.Label(new Rect(100, 100, -1, -1), "");
 
 			GUI.SetNextControlName("MyTextField");
-			fieldMsg = GUI.TextArea(new Rect(Screen.width * 0.35f, Screen.height * 0.9f, 350, 40), fieldMsg, 100);
-			if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.35f + 355, Screen.height * 0.9f, 45, 40), "Send") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
+			fieldMsg = GUI.TextArea(new Rect(0f, Screen.height * 0.8f, Screen.width * 0.8f, Screen.height * 0.2f), fieldMsg, 100);
+			if (fieldMsg != "" && (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Send") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))) {
 				GUI.FocusControl("dummy");
 				if (fieldMsg != "\n") {
 					//postMessage(fieldMsg);
@@ -51,7 +54,7 @@ public class Chatroom : MonoBehaviour {
 				posting = false;
 			}
 		} else {
-			if (GUI.Button(new Rect(Screen.width * 0.5f - 25, Screen.height - 40, 50, 30), "Post!")) {
+			if (GUI.Button(new Rect(Screen.width * 0.8f, Screen.height * 0.8f, Screen.width * 0.2f, Screen.height * 0.2f), "Post!") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return)) {
 				posting = true;
 			}
 		}
@@ -68,12 +71,13 @@ public class Chatroom : MonoBehaviour {
 
 	public void postMessage(string message) {
 
-		sendMessageToServer (message);
+		//sendMessageToServer (message);
 
 		msgCount++;
-		GameObject newMsg = GameObject.Instantiate(Resources.Load("ChatBubble"), new Vector2(0, -5.5f), new Quaternion(0, 0, 0, 0)) as GameObject;
+		GameObject newMsg = GameObject.Instantiate(Resources.Load("ChatBubble"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
 		message = splitTextMesh(message, 17);
 		newMsg.transform.FindChild("Message").GetComponent<TextMesh>().text = message;
+		newMsg.transform.Translate (new Vector3 (2f, -1f, 0f));
 		Vector2 transVec = new Vector2(0, newMsg.GetComponent<SpriteRenderer>().sprite.bounds.size.y);
 
 		foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) { // Placeholder name

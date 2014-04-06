@@ -15,15 +15,12 @@ public class Locationpls : MonoBehaviour {
 	private string password;
 	private string email;
 
-	double lat;
-	double lon;
+	public static double lat;
+	public static double lon;
+	float xhigh, yhigh, xlow, ylow;
 
 	bool haveaccount = false;
-
-	bool usernamecleared = true;
-	bool passwordcleared = true;
-	bool emailcleared = true;
-	bool loggedin = false;
+	public static bool loggedin = false;
 	delegate void dummy();
 	dummy dothis;
 
@@ -35,36 +32,42 @@ public class Locationpls : MonoBehaviour {
 		delay ();
 		StartCoroutine(wait (2, dothis));
 		StartCoroutine(updateLocation());
+		xhigh = (float)(37.008579 + 37.002935)/2;
+		ylow = (float)(-122.070676 - 122.067273) / 2;
+		xlow = (float)(36.974237 + 36.978925) / 2;
+		yhigh = (float)(-122.049974 - 122.047807) / 2;
 	}
 
 	void OnGUI() {
-		haveaccount = GUI.Toggle (new Rect(210, 40, 100, 20), haveaccount, "Existing User?");
+		if (loggedin)
+			return;
+		haveaccount = GUI.Toggle (new Rect(Screen.width * 0.8f, Screen.height * 0.5f, 200, 40), haveaccount, "Existing User?");
 			
 		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "usernameField") && usernamecleared){
 			username = "";
 			usernamecleared = false;
 		}*/
-		username = GUI.TextField(new Rect(10, 10, 200, 20), username, 40);
+		username = GUI.TextField(new Rect(Screen.width * 0.1f, Screen.height * 0.1f, Screen.width * 0.5f, Screen.height * 0.2f), username, 40);
 		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "passwordField") && passwordcleared){
 			password = "";
 			passwordcleared = false;
 		}*/
-		password = GUI.PasswordField(new Rect(10, 40, 200, 20), password, '*');
+		password = GUI.PasswordField(new Rect(Screen.width * 0.1f, Screen.height * 0.35f, Screen.width * 0.5f, Screen.height * 0.2f), password, '*');
 		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "emailField") && emailcleared){
 			email = "";
 			emailcleared = false;
 		}*/
 
-		if (!loggedin){
-			if (!haveaccount)
-				email = GUI.TextField(new Rect(10, 70, 200, 20), email, 40);
-			if(haveaccount){
-				if(GUI.Button (new Rect (10, 100, 200, 20), "LOGIN"))
-					login ();
-			}else
-				if(GUI.Button (new Rect (10, 100, 200, 20), "SIGNUP"))
-					signUp ();
-		}
+
+		if (!haveaccount)
+			email = GUI.TextField(new Rect(Screen.width * 0.1f, Screen.height * 0.6f, Screen.width * 0.5f, Screen.height * 0.2f), email, 40);
+		if(haveaccount){
+			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "LOGIN") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
+				login ();
+		}else
+			if(GUI.Button (new Rect (Screen.width * 0.2f, Screen.height * 0.85f, Screen.width * 0.3f, Screen.height * 0.1f), "SIGNUP") || (!Event.current.shift && Event.current.keyCode == KeyCode.Return))
+				signUp ();
+
 	}
 
 	void login(){
@@ -132,7 +135,7 @@ public class Locationpls : MonoBehaviour {
 			                                               {
 				// Now let's update it with some new data.  In this case, only cheatMode
 				// and score will get sent to the cloud.  playerName hasn't changed.
-				ParseUser.CurrentUser["Geolocation"] =  new ParseGeoPoint( 50, 50 );;
+				//ParseUser.CurrentUser["Geolocation"] =  new ParseGeoPoint( 50, 50 );
 				ParseUser.CurrentUser.SaveAsync();
 			});
 			StartCoroutine(wait (2, dothis));
@@ -163,12 +166,14 @@ public class Locationpls : MonoBehaviour {
 			li = Input.location.lastData;
 		Input.location.Stop();
 
-		gameObject.GetComponent<GUIText>().text = "LAT: " + li.latitude + " LON: " + li.longitude + " ALT: " + li.altitude;
+		lat = 36.989291;
+		lon = -122.063417;
 
-		lat = li.latitude;
-		lon = li.longitude;
+		ParseUser.CurrentUser["Geolocation"] = new ParseGeoPoint( lat, lon );
 
-		yield return new WaitForSeconds(0);
+		yield return new WaitForSeconds(30);
+
+		StartCoroutine (updateLocation ());
 	}
 	
 }
