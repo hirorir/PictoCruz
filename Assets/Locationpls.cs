@@ -17,6 +17,8 @@ public class Locationpls : MonoBehaviour {
 	double lat;
 	double lon;
 
+	bool haveaccount = false;
+
 	bool usernamecleared = true;
 	bool passwordcleared = true;
 	bool emailcleared = true;
@@ -31,6 +33,8 @@ public class Locationpls : MonoBehaviour {
 	}
 
 	void OnGUI() {
+		haveaccount = GUI.Toggle (new Rect(210, 40, 100, 20), haveaccount, "Existing User?");
+			
 		/*if (GUI.Button (new Rect (10, 10, 200, 20), "", "usernameField") && usernamecleared){
 			username = "";
 			usernamecleared = false;
@@ -45,47 +49,66 @@ public class Locationpls : MonoBehaviour {
 			email = "";
 			emailcleared = false;
 		}*/
-		email = GUI.TextField(new Rect(10, 70, 200, 20), email, 40);
 
-		if (GUI.Button (new Rect (10, 100, 200, 20), "SIGNUP") && !loggedin){
-			user = new ParseUser(){
-				Username = username,
-				Password = password,
-				Email = email
-
-			};
-
-
-			user["Geolocation"] = new ParseGeoPoint( lat, lon );
-			
-
-			int results = 0;
-			ParseQuery<ParseUser> query = new ParseQuery<ParseUser>();
-			query.WhereEqualTo ("username", username).CountAsync ().ContinueWith (t => {
-				results += t.Result;
-				query.WhereEqualTo ("email", email).CountAsync ().ContinueWith (s => {
-					results += s.Result;
-					if(results > 0){
-						print ("User or email already exists");
-						return;
-					}
-					if(!Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z")){
-						print("Invalid email address");
-						return;
-					}
-
-					Task signuptask = user.SignUpAsync ();
-					print ("Success");
-					//loggedin = true;
-					try{
-						ParseUser.LogInAsync(username, password);
-						print ("Logged In");
-					}catch(System.Exception e){
-						print ("Login failed");
-					}
-				});
-			});
+		if (!loggedin){
+			if (!haveaccount)
+				email = GUI.TextField(new Rect(10, 70, 200, 20), email, 40);
+			if(haveaccount){
+				if(GUI.Button (new Rect (10, 100, 200, 20), "LOGIN"))
+					login ();
+			}else
+				if(GUI.Button (new Rect (10, 100, 200, 20), "SIGNUP"))
+					signUp ();
 		}
+	}
+
+	void login(){
+		user = new ParseUser(){
+			Username = username,
+			Password = password			
+		};
+
+		ParseUser.LogInAsync(username, password);
+		if (ParseUser.CurrentUser.IsAuthenticated) {
+			print ("Logged In");
+			loggedin = true;
+		}
+	}
+	
+	void signUp(){
+		user = new ParseUser(){
+			Username = username,
+			Password = password,
+			Email = email
+		};
+		
+		
+		user["Geolocation"] = new ParseGeoPoint( lat, lon );
+		
+		int results = 0;
+		ParseQuery<ParseUser> query = new ParseQuery<ParseUser>();
+		query.WhereEqualTo ("username", username).CountAsync ().ContinueWith (t => {
+			results += t.Result;
+			query.WhereEqualTo ("email", email).CountAsync ().ContinueWith (s => {
+				results += s.Result;
+				if(results > 0){
+					print ("User or email already exists");
+					return;
+				}
+				if(!Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z")){
+					print("Invalid email address");
+					return;
+				}
+				
+				Task signuptask = user.SignUpAsync ();
+				print ("Success");
+				ParseUser.LogInAsync(username, password);
+				if (ParseUser.CurrentUser.IsAuthenticated) {
+					print ("Logged In");
+					loggedin = true;
+				}
+			});
+		});
 	}
 
 	void Update () {
