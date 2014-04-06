@@ -13,15 +13,24 @@ public class Chatroom : MonoBehaviour {
 	public GUIStyle stylin;
 	public Entity entity;
 	public string userId;
+	List<string> parser = new List<string> ();
+	bool spawn = false;
 
 	// Use this for initialization
 	void Start () {
-		drawEverybodyElse ();
+		StartCoroutine(drawEverybodyElse ());
 		stylin = Resources.Load<GUISkin>("Defaultpls").button;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (spawn) {
+			foreach(string parsed in parser){
+				GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
+				temp.GetComponent<Entity> ().setUID (parsed);
+			}
+			spawn = false;
+		}
 		Transform cam = GameObject.Find("Main Camera").transform;
 		if (Input.GetKey("down")) {
 			if (cam.transform.position.y > 0) {
@@ -64,15 +73,16 @@ public class Chatroom : MonoBehaviour {
 		}
 	}
 
-	public void drawEverybodyElse(){
+	public IEnumerator drawEverybodyElse(){
 		var query = ParseUser.Query.WhereNotEqualTo ("objectId", userId);
-		List<ParseUser> parser = new List<ParseUser> ();
 		query.FindAsync ().ContinueWith (t => {
 			IEnumerable<ParseUser> list = t.Result;
+			foreach(ParseUser user in list){
+				parser.Add (user.ObjectId);
+			}
+			spawn = true;
 		});
-		print(parser.Count);
-		//GameObject temp = GameObject.Instantiate(Resources.Load("Entity"), new Vector3(0f, 0f, 0f), new Quaternion(0, 0, 0, 0)) as GameObject;
-			//temp.GetComponent<Entity> ().setUID (puck.ObjectId);
+		yield return new WaitForSeconds (2);
 	}
 
 	public void sendMessageToServer(string message){

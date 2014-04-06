@@ -17,12 +17,12 @@ public class ScrollBox : MonoBehaviour {
 		if (Input.GetMouseButton(0) && scrollActive) {
 			int dir = 0;
 			if (mousePos.y - prevPos.y > 0) {
-				dir = -1;
-			} else if (mousePos.y - prevPos.y < 0) {
 				dir = 1;
+			} else if (mousePos.y - prevPos.y < 0) {
+				dir = -1;
 			}
 			foreach (GameObject bubble in GameObject.FindGameObjectsWithTag("ChatBubble")) {
-				bubble.transform.Translate(new Vector2(0f, dir * 0.035f));
+				bubble.transform.Translate(new Vector2(0f, dir * 0.1f));
 			}
 		}
 		prevPos = mousePos;
