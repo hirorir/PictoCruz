@@ -21,12 +21,16 @@ public class Locationpls : MonoBehaviour {
 	bool passwordcleared = true;
 	bool emailcleared = true;
 	bool loggedin = false;
+	delegate void dummy();
+	dummy dothis;
 
 	// Use this for initialization
 	void Start () {
 		username = "Username";
 		password = "Password";
 		email = "Email";
+		delay ();
+		StartCoroutine(wait (2, dothis));
 		StartCoroutine(updateLocation());
 	}
 
@@ -90,6 +94,27 @@ public class Locationpls : MonoBehaviour {
 
 	void Update () {
 
+	}
+
+	IEnumerator wait (float sec, dummy dothis){
+		yield return new WaitForSeconds (sec);
+		dothis ();
+	}
+	
+	void delay(){
+		
+		dothis = () => {
+			ParseUser.CurrentUser.SaveAsync().ContinueWith(t =>
+			                                               {
+				// Now let's update it with some new data.  In this case, only cheatMode
+				// and score will get sent to the cloud.  playerName hasn't changed.
+				ParseUser.CurrentUser["Geolocation"] =  new ParseGeoPoint( 50, 50 );;
+				ParseUser.CurrentUser.SaveAsync();
+			});
+			StartCoroutine(wait (2, dothis));
+		};
+		
+		
 	}
 
 	IEnumerator updateLocation(){
