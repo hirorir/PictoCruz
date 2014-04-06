@@ -16,5 +16,12 @@ public class ChatBubble : MonoBehaviour {
 			GameObject.Find("Chatroom").GetComponent<Chatroom>().msgDead();
 			Destroy(gameObject);
 		}
+		if (transform.localPosition.y > 4 || transform.localPosition.y < -3) {
+			renderer.enabled = false;
+			transform.FindChild("Message").renderer.enabled = false;
+		} else {
+			renderer.enabled = true;
+			transform.FindChild("Message").renderer.enabled = true;
+		}
 	}
 }
